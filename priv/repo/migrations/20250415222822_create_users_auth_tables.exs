@@ -7,11 +7,11 @@ defmodule Cooptour.Repo.Migrations.CreateUsersAuthTables do
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :email, :citext, null: false
-      add :hashed_password, :string, null: false
+      add :hashed_password, :string, null: true
       add :role, :string, null: false
       add :is_active, :boolean, null: false
-      add :first_name, :string, null: false
-      add :last_name, :string, null: false
+      add :first_name, :string, null: true
+      add :last_name, :string, null: true
       add :phone, :string
       add :confirmed_at, :utc_datetime
 

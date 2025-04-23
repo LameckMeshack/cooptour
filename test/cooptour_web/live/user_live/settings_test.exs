@@ -131,13 +131,13 @@ defmodule CooptourWeb.UserLive.SettingsTest do
         |> element("#password_form")
         |> render_change(%{
           "user" => %{
-            "password" => "too short",
-            "password_confirmation" => "does not match"
+            "password" => "1*AB",
+            "password_confirmation" => "1*AB1*AB"
           }
         })
 
       assert result =~ "Save Password"
-      assert result =~ "should be at least 12 character(s)"
+      assert result =~ "should be at least 8 character(s)"
       assert result =~ "does not match password"
     end
 
@@ -148,14 +148,14 @@ defmodule CooptourWeb.UserLive.SettingsTest do
         lv
         |> form("#password_form", %{
           "user" => %{
-            "password" => "too short",
-            "password_confirmation" => "does not match"
+            "password" => "!1@Rt",
+            "password_confirmation" => "!1@Rt!1@Rt"
           }
         })
         |> render_submit()
 
       assert result =~ "Save Password"
-      assert result =~ "should be at least 12 character(s)"
+      assert result =~ "should be at least 8 character(s)"
       assert result =~ "does not match password"
     end
   end

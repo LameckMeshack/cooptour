@@ -184,13 +184,13 @@ defmodule Cooptour.AccountsTest do
         Accounts.change_user_password(
           %User{},
           %{
-            "password" => "new valid password"
+            "password" => "Passw0rd!",
           },
           hash_password: false
         )
 
       assert changeset.valid?
-      assert get_change(changeset, :password) == "new valid password"
+      assert get_change(changeset, :password) == "Passw0rd!"
       assert is_nil(get_change(changeset, :hashed_password))
     end
   end
@@ -203,12 +203,12 @@ defmodule Cooptour.AccountsTest do
     test "validates password", %{user: user} do
       {:error, changeset} =
         Accounts.update_user_password(user, %{
-          password: "not valid",
-          password_confirmation: "another"
+          password: "@Sht3",
+          password_confirmation: "invalidpassword"
         })
 
       assert %{
-               password: ["should be at least 12 character(s)"],
+               password: ["should be at least 8 character(s)"],
                password_confirmation: ["does not match password"]
              } = errors_on(changeset)
     end
@@ -225,12 +225,12 @@ defmodule Cooptour.AccountsTest do
     test "updates the password", %{user: user} do
       {:ok, user, expired_tokens} =
         Accounts.update_user_password(user, %{
-          password: "new valid password"
+          password: "Passw0rd!"
         })
 
       assert expired_tokens == []
       assert is_nil(user.password)
-      assert Accounts.get_user_by_email_and_password(user.email, "new valid password")
+      assert Accounts.get_user_by_email_and_password(user.email, "Passw0rd!")
     end
 
     test "deletes all tokens for the given user", %{user: user} do
@@ -238,7 +238,7 @@ defmodule Cooptour.AccountsTest do
 
       {:ok, _, _} =
         Accounts.update_user_password(user, %{
-          password: "new valid password"
+          password: "Passw0rd!"
         })
 
       refute Repo.get_by(UserToken, user_id: user.id)

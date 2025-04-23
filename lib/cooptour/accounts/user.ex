@@ -9,7 +9,7 @@ defmodule Cooptour.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :current_password, :string, virtual: true, redact: true
-    field :role, Ecto.Enum, values: @roles, default: :user
+    field :role, Ecto.Enum, values: @roles, default: :admin
     field :first_name, :string
     field :last_name, :string
     field :phone, :string
@@ -18,6 +18,14 @@ defmodule Cooptour.Accounts.User do
     field :authenticated_at, :utc_datetime, virtual: true
 
     timestamps(type: :utc_datetime)
+  end
+
+  def registration_changeset(__MODULE__, attrs, opts \\ [] ) do
+    %__MODULE__{}
+    |> cast(attrs, [:email, :password, :first_name, :last_name, :phone, :is_active, :role])
+    |> validate_required([:email, :password, :first_name, :last_name, :phone])
+    |> validate_email(opts)
+    |> password_changeset(attrs, opts)
   end
 
   @doc """
@@ -89,11 +97,11 @@ defmodule Cooptour.Accounts.User do
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: 12, max: 72)
+    |> validate_length(:password, min: 8, max: 72)
     # Examples of additional password validation:
-    # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
-    # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
-    # |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
+    |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
+    |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
+    |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
     |> maybe_hash_password(opts)
   end
 
