@@ -80,6 +80,19 @@ defmodule Cooptour.Accounts do
     |> Repo.insert()
   end
 
+  ## User confirmation
+  @doc """
+  Confimatiom chnagset for vallidation on form
+
+  ## Examples
+
+      iex> confirmation_changeset(user, %{field: value})
+      %Ecto.Changeset{data: %User{}}
+  """
+  def user_confirmation_changeset(attrs \\ %{}) do
+    %User{} |> User.update_user_details_changeset(attrs)
+  end
+
   ## Settings
 
   @doc """

@@ -16,11 +16,12 @@ defmodule Cooptour.Accounts.User do
     field :is_active, :boolean, default: true
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
+    field :token, :string, virtual: true
 
     timestamps(type: :utc_datetime)
   end
 
-  def registration_changeset(__MODULE__, attrs, opts \\ [] ) do
+  def registration_changeset(__MODULE__, attrs, opts \\ []) do
     %__MODULE__{}
     |> cast(attrs, [:email, :password, :first_name, :last_name, :phone, :is_active, :role])
     |> validate_required([:email, :password, :first_name, :last_name, :phone])
@@ -101,7 +102,9 @@ defmodule Cooptour.Accounts.User do
     # Examples of additional password validation:
     |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
     |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
-    |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
+    |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/,
+      message: "at least one digit or punctuation character"
+    )
     |> maybe_hash_password(opts)
   end
 
@@ -123,9 +126,30 @@ defmodule Cooptour.Accounts.User do
   @doc """
   Confirms the account by setting `confirmed_at`.
   """
-  def confirm_changeset(user) do
+  def confirm_changeset(user, attrs) do
     now = DateTime.utc_now() |> DateTime.truncate(:second)
-    change(user, confirmed_at: now)
+
+    # Use pattern matching or get_in to safely access map keys regardless of string/atom keys
+    first_name = attrs[:first_name] || attrs["first_name"]
+    last_name = attrs[:last_name] || attrs["last_name"]
+    phone = attrs[:phone] || attrs["phone"]
+
+    change(user, %{
+      confirmed_at: now,
+      first_name: first_name,
+      last_name: last_name,
+      phone: phone
+    })
+  end
+
+  def update_user_details_changeset(user, attrs \\ %{}) do
+    user
+    |> cast(attrs, [:first_name, :last_name, :phone, :token])
+    |> validate_format(:phone, ~r/^\+?[0-9]{10,15}$/, message: "must be a valid phone number")
+    |> validate_required([:first_name, :last_name, :phone])
+    |> validate_length(:first_name, min: 3, max: 50)
+    |> validate_length(:last_name, min: 3, max: 50)
+    |> validate_length(:phone, min: 10, max: 15)
   end
 
   @doc """

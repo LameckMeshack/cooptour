@@ -184,7 +184,7 @@ defmodule Cooptour.AccountsTest do
         Accounts.change_user_password(
           %User{},
           %{
-            "password" => "Passw0rd!",
+            "password" => "Passw0rd!"
           },
           hash_password: false
         )

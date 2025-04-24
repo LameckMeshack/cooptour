@@ -12,6 +12,7 @@ defmodule CooptourWeb.UserLive.Confirmation do
         <.form
           :if={!@user.confirmed_at}
           for={@form}
+          phx-change="validate"
           id="confirmation_form"
           phx-submit="submit"
           action={~p"/users/log-in?_action=confirmed"}
@@ -24,6 +25,9 @@ defmodule CooptourWeb.UserLive.Confirmation do
             type="checkbox"
             label="Keep me logged in"
           />
+          <.input field={@form[:first_name]} type="text" label="First Name" phx-mounted={JS.focus()} />
+          <.input field={@form[:last_name]} type="text" label="Last Name" />
+          <.input field={@form[:phone]} type="tel" label="Phone" />
           <.button variant="primary" phx-disable-with="Confirming..." class="w-full">
             Confirm my account
           </.button>
@@ -57,9 +61,15 @@ defmodule CooptourWeb.UserLive.Confirmation do
 
   def mount(%{"token" => token}, _session, socket) do
     if user = Accounts.get_user_by_magic_link_token(token) do
-      form = to_form(%{"token" => token}, as: "user")
+      form =
+        if user.confirmed_at do
+          to_form(%{"token" => token}, as: "user")
+        else
+          changeset = Accounts.user_confirmation_changeset(%{})
+          to_form(changeset, as: "user") |> Map.put(:data, %{"token" => token})
+        end
 
-      {:ok, assign(socket, user: user, form: form, trigger_submit: false),
+      {:ok, assign(socket, user: user, form: form, token: token, trigger_submit: false),
        temporary_assigns: [form: nil]}
     else
       {:ok,
@@ -70,6 +80,16 @@ defmodule CooptourWeb.UserLive.Confirmation do
   end
 
   def handle_event("submit", %{"user" => params}, socket) do
+    params = Map.put(params, "token", socket.assigns.token) |> IO.inspect(label: "78params")
+
     {:noreply, assign(socket, form: to_form(params, as: "user"), trigger_submit: true)}
+  end
+
+  def handle_event("validate", %{"user" => user_params}, socket) do
+    changeset =
+      Accounts.user_confirmation_changeset(user_params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, form: to_form(changeset, as: "user"))}
   end
 end
