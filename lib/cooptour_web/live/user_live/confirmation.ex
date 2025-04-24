@@ -60,26 +60,24 @@ defmodule CooptourWeb.UserLive.Confirmation do
     """
   end
 
+  @impl true
   def mount(%{"token" => token}, _session, socket) do
-    if user = Accounts.get_user_by_magic_link_token(token) do
-      form =
-        if user.confirmed_at do
-          to_form(%{"token" => token}, as: "user")
-        else
-          changeset = Accounts.user_confirmation_changeset(%{})
-          to_form(changeset, as: "user") |> Map.put(:data, %{"token" => token})
-        end
+    case Accounts.get_user_by_magic_link_token(token) do
+      nil ->
+        {:ok,
+         socket
+         |> put_flash(:error, "Magic link is invalid or it has expired.")
+         |> push_navigate(to: ~p"/users/log-in")}
 
-      {:ok, assign(socket, user: user, form: form, token: token, trigger_submit: false),
-       temporary_assigns: [form: nil]}
-    else
-      {:ok,
-       socket
-       |> put_flash(:error, "Magic link is invalid or it has expired.")
-       |> push_navigate(to: ~p"/users/log-in")}
+      user ->
+        form = create_form(user, token)
+
+        {:ok, assign(socket, user: user, form: form, token: token, trigger_submit: false),
+         temporary_assigns: [form: nil]}
     end
   end
 
+  @impl true
   def handle_event("submit", %{"user" => params}, socket) do
     params_with_tkn = Map.put(params, "token", socket.assigns.token)
     changeset = Accounts.user_confirmation_changeset(params_with_tkn)
@@ -92,11 +90,21 @@ defmodule CooptourWeb.UserLive.Confirmation do
     end
   end
 
+  @impl true
   def handle_event("validate", %{"user" => user_params}, socket) do
     changeset =
       Accounts.user_confirmation_changeset(user_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, form: to_form(changeset, as: "user"))}
+  end
+
+  defp create_form(%{confirmed_at: nil} = user, token) do
+    changeset = Accounts.user_confirmation_changeset(%{"token" => token})
+    to_form(changeset, as: "user") |> Map.put(:data, %{"token" => token})
+  end
+
+  defp create_form(_user, token) do
+    to_form(%{"token" => token}, as: "user")
   end
 end
