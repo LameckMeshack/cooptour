@@ -14,7 +14,10 @@ defmodule Cooptour.AccountsFixtures do
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
-      email: unique_user_email()
+      email: unique_user_email(),
+      first_name: "John",
+      last_name: "Doe",
+      phone: "1234567890"
     })
   end
 
@@ -35,7 +38,15 @@ defmodule Cooptour.AccountsFixtures do
         Accounts.deliver_login_instructions(user, url)
       end)
 
-    {:ok, user, _expired_tokens} = Accounts.login_user_by_magic_link(token)
+    user_with_tkn = %{
+      "last_name" => user.last_name,
+      "first_name" => user.first_name,
+      "token" => token,
+      "phone" => user.phone,
+      "password" => valid_user_password()
+    }
+
+    {:ok, user, _expired_tokens} = Accounts.login_user_by_magic_link(user_with_tkn)
 
     user
   end

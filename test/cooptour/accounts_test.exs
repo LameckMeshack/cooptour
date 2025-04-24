@@ -316,19 +316,33 @@ defmodule Cooptour.AccountsTest do
       refute user.confirmed_at
       {encoded_token, hashed_token} = generate_user_magic_link_token(user)
 
+      data = %{
+        "first_name" => "John",
+        "last_name" => "Doe",
+        "phone" => "1234567890",
+        "token" => encoded_token
+      }
+
       assert {:ok, user, [%{token: ^hashed_token}]} =
-               Accounts.login_user_by_magic_link(encoded_token)
+               Accounts.login_user_by_magic_link(data)
 
       assert user.confirmed_at
     end
 
     test "returns user and (deleted) token for confirmed user" do
       user = user_fixture()
+
       assert user.confirmed_at
       {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
-      assert {:ok, ^user, []} = Accounts.login_user_by_magic_link(encoded_token)
+          data = %{
+        "first_name" => user.first_name,
+        "last_name" => user.last_name,
+        "phone" => user.phone,
+        "token" => encoded_token
+      }
+      assert {:ok, ^user, []} = Accounts.login_user_by_magic_link(data)
       # one time use only
-      assert {:error, :not_found} = Accounts.login_user_by_magic_link(encoded_token)
+      assert {:error, :not_found} = Accounts.login_user_by_magic_link(data)
     end
 
     test "raises when unconfirmed user has password set" do
@@ -336,8 +350,14 @@ defmodule Cooptour.AccountsTest do
       {1, nil} = Repo.update_all(User, set: [hashed_password: "hashed"])
       {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
 
+          data = %{
+        "first_name" => user.first_name,
+        "last_name" => user.last_name,
+        "phone" => user.phone,
+        "token" => encoded_token
+      }
       assert_raise RuntimeError, ~r/magic link log in is not allowed/, fn ->
-        Accounts.login_user_by_magic_link(encoded_token)
+        Accounts.login_user_by_magic_link(data)
       end
     end
   end

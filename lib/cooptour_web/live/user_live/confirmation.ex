@@ -3,6 +3,7 @@ defmodule CooptourWeb.UserLive.Confirmation do
 
   alias Cooptour.Accounts
 
+  @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
@@ -99,7 +100,7 @@ defmodule CooptourWeb.UserLive.Confirmation do
     {:noreply, assign(socket, form: to_form(changeset, as: "user"))}
   end
 
-  defp create_form(%{confirmed_at: nil} = user, token) do
+  defp create_form(%{confirmed_at: nil} = _user, token) do
     changeset = Accounts.user_confirmation_changeset(%{"token" => token})
     to_form(changeset, as: "user") |> Map.put(:data, %{"token" => token})
   end
