@@ -224,7 +224,7 @@ defmodule Cooptour.Accounts do
      source of security pitfalls. See the "Mixing magic link and password registration" section of
      `mix help phx.gen.auth`.
   """
-  def login_user_by_magic_link(token) do
+  def login_user_by_magic_link(%{"token" => token} = user_params) do
     {:ok, query} = UserToken.verify_magic_link_token_query(token)
 
     case Repo.one(query) do
@@ -240,7 +240,7 @@ defmodule Cooptour.Accounts do
 
       {%User{confirmed_at: nil} = user, _token} ->
         user
-        |> User.confirm_changeset()
+        |> User.confirm_changeset(user_params)
         |> update_user_and_delete_all_tokens()
 
       {user, token} ->

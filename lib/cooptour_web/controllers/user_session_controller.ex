@@ -13,8 +13,8 @@ defmodule CooptourWeb.UserSessionController do
   end
 
   # magic link login
-  defp create(conn, %{"user" => %{"token" => token} = user_params}, info) do
-    case Accounts.login_user_by_magic_link(token) do
+  defp create(conn, %{"user" => %{"token" => _token} = user_params}, info) do
+    case Accounts.login_user_by_magic_link(user_params) do
       {:ok, user, tokens_to_disconnect} ->
         UserAuth.disconnect_sessions(tokens_to_disconnect)
 
