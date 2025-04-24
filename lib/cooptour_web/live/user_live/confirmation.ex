@@ -17,6 +17,7 @@ defmodule CooptourWeb.UserLive.Confirmation do
           phx-submit="submit"
           action={~p"/users/log-in?_action=confirmed"}
           phx-trigger-action={@trigger_submit}
+          phx-debounce="blur"
         >
           <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
           <.input
@@ -80,9 +81,15 @@ defmodule CooptourWeb.UserLive.Confirmation do
   end
 
   def handle_event("submit", %{"user" => params}, socket) do
-    params = Map.put(params, "token", socket.assigns.token) |> IO.inspect(label: "78params")
+    params_with_tkn = Map.put(params, "token", socket.assigns.token)
+    changeset = Accounts.user_confirmation_changeset(params_with_tkn)
 
-    {:noreply, assign(socket, form: to_form(params, as: "user"), trigger_submit: true)}
+    if changeset.valid? do
+      {:noreply, assign(socket, form: to_form(params_with_tkn, as: "user"), trigger_submit: true)}
+    else
+      changeset = changeset |> Map.put(:action, :validate)
+      {:noreply, assign(socket, form: to_form(changeset, as: "user"))}
+    end
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
