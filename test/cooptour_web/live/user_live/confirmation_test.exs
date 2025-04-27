@@ -40,11 +40,18 @@ defmodule CooptourWeb.UserLive.ConfirmationTest do
 
       {:ok, lv, _html} = live(conn, ~p"/users/log-in/#{token}")
 
-      form = form(lv, "#confirmation_form", %{"user" => %{"token" => token}})
-      render_submit(form)
+      form = lv
+             |> form("#confirmation_form",
+               user: %{
+                 "last_name" => user.last_name,
+                 "first_name" => user.first_name,
+                 "phone" => user.phone,
+                 "remember_me" => "true",
+                  "token" =>token
+               }
+             )
 
-      conn = follow_trigger_action(form, conn)
-
+           conn = follow_trigger_action(form, conn) |> IO.inspect()
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
                "User confirmed successfully"
 
@@ -62,6 +69,8 @@ defmodule CooptourWeb.UserLive.ConfirmationTest do
 
       assert html =~ "Magic link is invalid or it has expired"
     end
+
+
 
     test "logs confirmed user in without changing confirmed_at", %{
       conn: conn,

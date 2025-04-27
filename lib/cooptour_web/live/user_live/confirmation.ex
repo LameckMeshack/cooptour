@@ -30,7 +30,7 @@ defmodule CooptourWeb.UserLive.Confirmation do
           <.input field={@form[:first_name]} type="text" label="First Name" phx-mounted={JS.focus()} />
           <.input field={@form[:last_name]} type="text" label="Last Name" />
           <.input field={@form[:phone]} type="tel" label="Phone" />
-          <.button variant="primary" phx-disable-with="Confirming..." class="w-full">
+          <.button variant="primary" phx-disable-with="Confirming..." class="w-full" type="submit">
             Confirm my account
           </.button>
         </.form>

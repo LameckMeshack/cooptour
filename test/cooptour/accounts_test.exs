@@ -334,12 +334,14 @@ defmodule Cooptour.AccountsTest do
 
       assert user.confirmed_at
       {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
-          data = %{
+
+      data = %{
         "first_name" => user.first_name,
         "last_name" => user.last_name,
         "phone" => user.phone,
         "token" => encoded_token
       }
+
       assert {:ok, ^user, []} = Accounts.login_user_by_magic_link(data)
       # one time use only
       assert {:error, :not_found} = Accounts.login_user_by_magic_link(data)
@@ -350,12 +352,13 @@ defmodule Cooptour.AccountsTest do
       {1, nil} = Repo.update_all(User, set: [hashed_password: "hashed"])
       {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
 
-          data = %{
+      data = %{
         "first_name" => user.first_name,
         "last_name" => user.last_name,
         "phone" => user.phone,
         "token" => encoded_token
       }
+
       assert_raise RuntimeError, ~r/magic link log in is not allowed/, fn ->
         Accounts.login_user_by_magic_link(data)
       end
