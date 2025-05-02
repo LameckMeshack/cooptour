@@ -23,7 +23,12 @@ defmodule CooptourWeb.CompanyLive.Show do
       <.list>
         <:item title="Name">{@company.name}</:item>
         <:item title="Logo">{@company.logo}</:item>
-        <:item title="Address">{@company.address}</:item>
+        <:item title="Address">
+          <%!-- {@company.address} --%>
+          {{if @company.address != %{} do
+             nil
+           end}}
+        </:item>
       </.list>
     </Layouts.app>
     """

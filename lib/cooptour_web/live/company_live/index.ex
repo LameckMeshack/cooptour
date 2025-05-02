@@ -23,7 +23,11 @@ defmodule CooptourWeb.CompanyLive.Index do
       >
         <:col :let={{_id, company}} label="Name">{company.name}</:col>
         <:col :let={{_id, company}} label="Logo">{company.logo}</:col>
-        <:col :let={{_id, company}} label="Address">{company.address}</:col>
+        <:col :let={{_id, company}} label="Address">
+          {if company.address != %{} do
+            nil
+          end}
+        </:col>
         <:action :let={{_id, company}}>
           <div class="sr-only">
             <.link navigate={~p"/companies/#{company}"}>Show</.link>
@@ -64,6 +68,9 @@ defmodule CooptourWeb.CompanyLive.Index do
   @impl true
   def handle_info({type, %Cooptour.Corporate.Company{}}, socket)
       when type in [:created, :updated, :deleted] do
-    {:noreply, stream(socket, :companies, Corporate.list_companies(socket.assigns.current_scope), reset: true)}
+    {:noreply,
+     stream(socket, :companies, Corporate.list_companies(socket.assigns.current_scope),
+       reset: true
+     )}
   end
 end

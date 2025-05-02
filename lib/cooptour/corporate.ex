@@ -41,6 +41,8 @@ defmodule Cooptour.Corporate do
 
   """
   def list_companies(%Scope{} = scope) do
+    # //convert field address to map
+
     Repo.all(from company in Company, where: company.user_id == ^scope.user.id)
   end
 
@@ -143,5 +145,138 @@ defmodule Cooptour.Corporate do
     true = company.user_id == scope.user.id
 
     Company.changeset(company, attrs, scope)
+  end
+
+  alias Cooptour.Corporate.Branch
+  alias Cooptour.Accounts.Scope
+
+  @doc """
+  Subscribes to scoped notifications about any branch changes.
+
+  The broadcasted messages match the pattern:
+
+    * {:created, %Branch{}}
+    * {:updated, %Branch{}}
+    * {:deleted, %Branch{}}
+
+  """
+  def subscribe_branches(%Scope{} = scope) do
+    key = scope.user.id
+
+    Phoenix.PubSub.subscribe(Cooptour.PubSub, "user:#{key}:branches")
+  end
+
+  @doc """
+  Returns the list of branches.
+
+  ## Examples
+
+      iex> list_branches(scope)
+      [%Branch{}, ...]
+
+  """
+  def list_branches(%Scope{} = scope) do
+    Repo.all(from branch in Branch, where: branch.user_id == ^scope.user.id)
+  end
+
+  @doc """
+  Gets a single branch.
+
+  Raises `Ecto.NoResultsError` if the Branch does not exist.
+
+  ## Examples
+
+      iex> get_branch!(123)
+      %Branch{}
+
+      iex> get_branch!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_branch!(%Scope{} = scope, id) do
+    Repo.get_by!(Branch, id: id, user_id: scope.user.id)
+  end
+
+  @doc """
+  Creates a branch.
+
+  ## Examples
+
+      iex> create_branch(%{field: value})
+      {:ok, %Branch{}}
+
+      iex> create_branch(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_branch(%Scope{} = scope, attrs \\ %{}) do
+    with {:ok, branch = %Branch{}} <-
+           %Branch{}
+           |> Branch.changeset(attrs, scope)
+           |> Repo.insert() do
+      broadcast(scope, {:created, branch})
+      {:ok, branch}
+    end
+  end
+
+  @doc """
+  Updates a branch.
+
+  ## Examples
+
+      iex> update_branch(branch, %{field: new_value})
+      {:ok, %Branch{}}
+
+      iex> update_branch(branch, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_branch(%Scope{} = scope, %Branch{} = branch, attrs) do
+    true = branch.user_id == scope.user.id
+
+    with {:ok, branch = %Branch{}} <-
+           branch
+           |> Branch.changeset(attrs, scope)
+           |> Repo.update() do
+      broadcast(scope, {:updated, branch})
+      {:ok, branch}
+    end
+  end
+
+  @doc """
+  Deletes a branch.
+
+  ## Examples
+
+      iex> delete_branch(branch)
+      {:ok, %Branch{}}
+
+      iex> delete_branch(branch)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_branch(%Scope{} = scope, %Branch{} = branch) do
+    true = branch.user_id == scope.user.id
+
+    with {:ok, branch = %Branch{}} <-
+           Repo.delete(branch) do
+      broadcast(scope, {:deleted, branch})
+      {:ok, branch}
+    end
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking branch changes.
+
+  ## Examples
+
+      iex> change_branch(branch)
+      %Ecto.Changeset{data: %Branch{}}
+
+  """
+  def change_branch(%Scope{} = scope, %Branch{} = branch, attrs \\ %{}) do
+    true = branch.user_id == scope.user.id
+
+    Branch.changeset(branch, attrs, scope)
   end
 end

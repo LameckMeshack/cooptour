@@ -18,4 +18,18 @@ defmodule Cooptour.CorporateFixtures do
     {:ok, company} = Cooptour.Corporate.create_company(scope, attrs)
     company
   end
+
+  @doc """
+  Generate a branch.
+  """
+  def branch_fixture(scope, attrs \\ %{}) do
+    attrs =
+      Enum.into(attrs, %{
+        address: %{},
+        name: "some name"
+      })
+
+    {:ok, branch} = Cooptour.Corporate.create_branch(scope, attrs)
+    branch
+  end
 end
