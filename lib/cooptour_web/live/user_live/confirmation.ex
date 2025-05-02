@@ -79,6 +79,19 @@ defmodule CooptourWeb.UserLive.Confirmation do
   end
 
   @impl true
+  def handle_event(
+        "submit",
+        %{"user" => %{"remember_me" => remember_me, "token" => token}},
+        socket
+      ) do
+    {:noreply,
+     assign(socket,
+       form: to_form(%{"token" => token, "remember_me" => remember_me}, as: "user"),
+       trigger_submit: true
+     )}
+  end
+
+  @impl true
   def handle_event("submit", %{"user" => params}, socket) do
     params_with_tkn = Map.put(params, "token", socket.assigns.token)
     changeset = Accounts.user_confirmation_changeset(params_with_tkn)
