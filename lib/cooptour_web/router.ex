@@ -54,6 +54,12 @@ defmodule CooptourWeb.Router do
       on_mount: [{CooptourWeb.UserAuth, :require_authenticated}] do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
+
+      live "/companies", CompanyLive.Index, :index
+      live "/companies/new", CompanyLive.Form, :new
+      live "/companies/:id", CompanyLive.Show, :show
+      live "/companies/:id/edit", CompanyLive.Form, :edit
+      live "/companies/:id/show/edit", CompanyLive.Form, :edit
     end
 
     post "/users/update-password", UserSessionController, :update_password
