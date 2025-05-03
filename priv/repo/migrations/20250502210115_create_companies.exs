@@ -7,6 +7,7 @@ defmodule Cooptour.Repo.Migrations.CreateCompanies do
       add :name, :string
       add :logo, :string
       add :address, :map, default: %{}
+      add :is_active, :boolean, default: true
       add :user_id, references(:users, on_delete: :nothing, type: :binary_id)
       # add :user_id, references(:users, type: :binary_id, on_delete: :delete_all)
 
