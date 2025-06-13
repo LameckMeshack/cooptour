@@ -276,7 +276,7 @@ defmodule CooptourWeb.UserAuth do
   def assign_company_to_scope(conn, _opts) do
     current_scope = conn.assigns.current_scope
 
-    if id = conn.params["id"] do
+    if id = conn.params["id"] && current_scope do
       company = Corporate.get_company!(current_scope, id)
       assign(conn, :current_scope, Scope.put_company(current_scope, company))
     else
