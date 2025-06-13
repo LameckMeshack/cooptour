@@ -11,10 +11,10 @@ defmodule CooptourWeb.BranchLive.Show do
         Branch {@branch.id}
         <:subtitle>This is a branch record from your database.</:subtitle>
         <:actions>
-          <.button navigate={~p"/branches"}>
+          <.button navigate={~p"/companies/#{@company}/branches"}>
             <.icon name="hero-arrow-left" />
           </.button>
-          <.button variant="primary" navigate={~p"/branches/#{@branch}/edit?return_to=show"}>
+          <.button variant="primary" navigate={~p"/companies/#{@company}/branches/#{@branch}/edit?return_to=show"}>
             <.icon name="hero-pencil-square" /> Edit branch
           </.button>
         </:actions>
@@ -58,6 +58,6 @@ defmodule CooptourWeb.BranchLive.Show do
     {:noreply,
      socket
      |> put_flash(:error, "The current branch was deleted.")
-     |> push_navigate(to: ~p"/branches")}
+     |> push_navigate(to: ~p"/companies/#{@company}/branches")}
   end
 end

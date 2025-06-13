@@ -10,7 +10,7 @@ defmodule CooptourWeb.BranchLive.Index do
       <.header>
         Listing Branches
         <:actions>
-          <.button variant="primary" navigate={~p"/branches/new"}>
+          <.button variant="primary" navigate={~p"/companies/#{@company}/branches/new"}>
             <.icon name="hero-plus" /> New Branch
           </.button>
         </:actions>
@@ -19,7 +19,7 @@ defmodule CooptourWeb.BranchLive.Index do
       <.table
         id="branches"
         rows={@streams.branches}
-        row_click={fn {_id, branch} -> JS.navigate(~p"/branches/#{branch}") end}
+        row_click={fn {_id, branch} -> JS.navigate(~p"/companies/#{@company}/branches/#{branch}") end}
       >
         <:col :let={{_id, branch}} label="Name">{branch.name}</:col>
         <:col :let={{_id, branch}} label="Address">
@@ -30,9 +30,9 @@ defmodule CooptourWeb.BranchLive.Index do
         </:col>
         <:action :let={{_id, branch}}>
           <div class="sr-only">
-            <.link navigate={~p"/branches/#{branch}"}>Show</.link>
+            <.link navigate={~p"/companies/#{@company}/branches/#{branch}"}>Show</.link>
           </div>
-          <.link navigate={~p"/branches/#{branch}/edit"}>Edit</.link>
+          <.link navigate={~p"/companies/#{@company}/branches/#{branch}/edit"}>Edit</.link>
         </:action>
         <:action :let={{id, branch}}>
           <.link

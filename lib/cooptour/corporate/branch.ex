@@ -8,7 +8,7 @@ defmodule Cooptour.Corporate.Branch do
   @foreign_key_type :binary_id
   schema "branches" do
     field :name, :string
-    embeds_one :addeess, Address
+    embeds_one :address, Address
 
     belongs_to :company, Company, type: :binary_id
     belongs_to :user, User, type: :binary_id

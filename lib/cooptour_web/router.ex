@@ -62,10 +62,10 @@ defmodule CooptourWeb.Router do
       live "/companies/:id/edit", CompanyLive.Form, :edit
       live "/companies/:id/show/edit", CompanyLive.Form, :edit
 
-      live "/branches", BranchLive.Index, :index
-      live "/branches/new", BranchLive.Form, :new
-      live "/branches/:id", BranchLive.Show, :show
-      live "/branches/:id/edit", BranchLive.Form, :edit
+      live "/companies/:id/branches", BranchLive.Index, :index
+      live "/companies/:id/branches/new", BranchLive.Form, :new
+      live "/companies/:id/branches/:id", BranchLive.Show, :show
+      live "/companies/:id/branches/:id/edit", BranchLive.Form, :edit
     end
 
     post "/users/update-password", UserSessionController, :update_password

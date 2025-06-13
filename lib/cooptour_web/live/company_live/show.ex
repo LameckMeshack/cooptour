@@ -17,6 +17,9 @@ defmodule CooptourWeb.CompanyLive.Show do
           <.button variant="primary" navigate={~p"/companies/#{@company}/edit?return_to=show"}>
             <.icon name="hero-pencil-square" /> Edit company
           </.button>
+          <.button variant="primary" navigate={~p"/companies/#{@company}/branches"}>
+            <.icon name="hero-pencil-square" /> Branches
+          </.button>
         </:actions>
       </.header>
 
