@@ -2,6 +2,9 @@ defmodule CooptourWeb.CompanyLive.Show do
   use CooptourWeb, :live_view
 
   alias Cooptour.Corporate
+  alias Cooptour.Corporate.Company
+  require Logger
+
 
   @impl true
   def render(assigns) do
@@ -48,20 +51,24 @@ defmodule CooptourWeb.CompanyLive.Show do
   end
 
   @impl true
-  def handle_info(
-        {:updated, %Cooptour.Corporate.Company{id: id} = company},
-        %{assigns: %{company: %{id: id}}} = socket
-      ) do
-    {:noreply, assign(socket, :company, company)}
+  def handle_info({:updated, %Company{id: id} = company}, socket) do
+    if socket.assigns[:company].id == id do
+      {:noreply, assign(socket, :company, company)}
+    else
+      {:noreply, socket}
+    end
   end
 
-  def handle_info(
-        {:deleted, %Cooptour.Corporate.Company{id: id}},
-        %{assigns: %{company: %{id: id}}} = socket
-      ) do
-    {:noreply,
-     socket
-     |> put_flash(:error, "The current company was deleted.")
-     |> push_navigate(to: ~p"/companies")}
+  def handle_info({:deleted, %Company{id: id}}, socket) do
+    if socket.assigns[:company].id == id do
+      {:noreply,
+       socket
+       |> put_flash(:error, "The current company was deleted.")
+       |> push_navigate(to: ~p"/companies")}
+    else
+      {:noreply, socket}
+    end
   end
+
+
 end
