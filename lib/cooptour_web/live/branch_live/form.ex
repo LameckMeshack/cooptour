@@ -35,8 +35,8 @@ defmodule CooptourWeb.BranchLive.Form do
   defp return_to("show"), do: "show"
   defp return_to(_), do: "index"
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    branch = Corporate.get_branch!(socket.assigns.current_scope, id)
+  defp apply_action(socket, :edit, %{"branch_id" => branch_id}) do
+    branch = Corporate.get_branch!(socket.assigns.current_scope, branch_id)
 
     socket
     |> assign(:page_title, "Edit Branch")
