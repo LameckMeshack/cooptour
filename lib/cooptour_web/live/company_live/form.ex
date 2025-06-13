@@ -56,7 +56,13 @@ defmodule CooptourWeb.CompanyLive.Form do
 
   @impl true
   def handle_event("validate", %{"company" => company_params}, socket) do
-    changeset = Corporate.change_company(socket.assigns.current_scope, socket.assigns.company, company_params)
+    changeset =
+      Corporate.change_company(
+        socket.assigns.current_scope,
+        socket.assigns.company,
+        company_params
+      )
+
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
@@ -65,7 +71,11 @@ defmodule CooptourWeb.CompanyLive.Form do
   end
 
   defp save_company(socket, :edit, company_params) do
-    case Corporate.update_company(socket.assigns.current_scope, socket.assigns.company, company_params) do
+    case Corporate.update_company(
+           socket.assigns.current_scope,
+           socket.assigns.company,
+           company_params
+         ) do
       {:ok, company} ->
         {:noreply,
          socket

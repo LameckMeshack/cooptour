@@ -55,7 +55,9 @@ defmodule CooptourWeb.BranchLive.Form do
 
   @impl true
   def handle_event("validate", %{"branch" => branch_params}, socket) do
-    changeset = Corporate.change_branch(socket.assigns.current_scope, socket.assigns.branch, branch_params)
+    changeset =
+      Corporate.change_branch(socket.assigns.current_scope, socket.assigns.branch, branch_params)
+
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
@@ -64,7 +66,11 @@ defmodule CooptourWeb.BranchLive.Form do
   end
 
   defp save_branch(socket, :edit, branch_params) do
-    case Corporate.update_branch(socket.assigns.current_scope, socket.assigns.branch, branch_params) do
+    case Corporate.update_branch(
+           socket.assigns.current_scope,
+           socket.assigns.branch,
+           branch_params
+         ) do
       {:ok, branch} ->
         {:noreply,
          socket

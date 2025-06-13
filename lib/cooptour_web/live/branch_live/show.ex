@@ -24,9 +24,9 @@ defmodule CooptourWeb.BranchLive.Show do
         <:item title="Name">{@branch.name}</:item>
         <:item title="Address">
           <%!-- {@branch.address} --%>
-          <%= if @branch.address != %{} do
-             nil
-           end %>
+          {if @branch.address != %{} do
+            nil
+          end}
         </:item>
       </.list>
     </Layouts.app>

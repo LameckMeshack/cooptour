@@ -23,10 +23,10 @@ defmodule CooptourWeb.BranchLive.Index do
       >
         <:col :let={{_id, branch}} label="Name">{branch.name}</:col>
         <:col :let={{_id, branch}} label="Address">
-        <%!-- {branch.address} --%>
-         <%=if branch.address != %{} do
-             nil
-           end %>
+          <%!-- {branch.address} --%>
+          {if branch.address != %{} do
+            nil
+          end}
         </:col>
         <:action :let={{_id, branch}}>
           <div class="sr-only">
@@ -68,6 +68,7 @@ defmodule CooptourWeb.BranchLive.Index do
   @impl true
   def handle_info({type, %Cooptour.Corporate.Branch{}}, socket)
       when type in [:created, :updated, :deleted] do
-    {:noreply, stream(socket, :branches, Corporate.list_branches(socket.assigns.current_scope), reset: true)}
+    {:noreply,
+     stream(socket, :branches, Corporate.list_branches(socket.assigns.current_scope), reset: true)}
   end
 end

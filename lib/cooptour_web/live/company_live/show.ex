@@ -25,9 +25,9 @@ defmodule CooptourWeb.CompanyLive.Show do
         <:item title="Logo">{@company.logo}</:item>
         <:item title="Address">
           <%!-- {@company.address} --%>
-          {{if @company.address != %{} do
-             nil
-           end}}
+          <%= if @company.address != %{} do %>
+            nil
+          <% end %>
         </:item>
       </.list>
     </Layouts.app>
@@ -37,6 +37,7 @@ defmodule CooptourWeb.CompanyLive.Show do
   @impl true
   def mount(%{"id" => id}, _session, socket) do
     Corporate.subscribe_companies(socket.assigns.current_scope)
+    IO.inspect(socket.assigns.current_scope, label: "socket 40", infinite: true)
 
     {:ok,
      socket

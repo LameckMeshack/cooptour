@@ -68,7 +68,10 @@ defmodule Cooptour.CorporateTest do
     test "update_company/3 with invalid data returns error changeset" do
       scope = user_scope_fixture()
       company = company_fixture(scope)
-      assert {:error, %Ecto.Changeset{}} = Corporate.update_company(scope, company, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Corporate.update_company(scope, company, @invalid_attrs)
+
       assert company == Corporate.get_company!(scope, company.id)
     end
 

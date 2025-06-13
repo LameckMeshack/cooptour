@@ -6,6 +6,7 @@ defmodule CooptourWeb.UserAuth do
 
   alias Cooptour.Accounts
   alias Cooptour.Accounts.Scope
+  alias Cooptour.Corporate
 
   # Make the remember me cookie valid for 60 days.
   # If you want bump or reduce this value, also change
@@ -153,12 +154,12 @@ defmodule CooptourWeb.UserAuth do
         live "/profile", ProfileLive, :index
       end
   """
-  def on_mount(:mount_current_scope, _params, session, socket) do
-    {:cont, mount_current_scope(socket, session)}
+  def on_mount(:mount_current_scope, params, session, socket) do
+    {:cont, mount_current_scope(socket, params, session)}
   end
 
-  def on_mount(:require_authenticated, _params, session, socket) do
-    socket = mount_current_scope(socket, session)
+  def on_mount(:require_authenticated, params, session, socket) do
+    socket = mount_current_scope(socket, params, session)
 
     if socket.assigns.current_scope && socket.assigns.current_scope.user do
       {:cont, socket}
@@ -172,8 +173,26 @@ defmodule CooptourWeb.UserAuth do
     end
   end
 
-  def on_mount(:require_sudo_mode, _params, session, socket) do
-    socket = mount_current_scope(socket, session)
+  def on_mount(:assign_company_to_scope, %{id: id}, _session, socket) do
+    IO.inspect(socket, label: "calling assign_company_to_scope", infinite: true)
+
+    socket =
+      case socket.assigns.current_scope do
+        %{company: nil} = scope ->
+          company = Corporate.get_company!(scope.user.id, id)
+          Phoenix.Component.assign(socket, :current_scope, Scope.put_company(scope, company))
+
+        _ ->
+          socket
+      end
+
+    {:cont, socket}
+  end
+
+  def on_mount(:assign_company_to_scope, _params, _session, socket), do: {:cont, socket}
+
+  def on_mount(:require_sudo_mode, params, session, socket) do
+    socket = mount_current_scope(socket, params, session)
 
     if Accounts.sudo_mode?(socket.assigns.current_scope.user, -10) do
       {:cont, socket}
@@ -187,14 +206,25 @@ defmodule CooptourWeb.UserAuth do
     end
   end
 
-  defp mount_current_scope(socket, session) do
+  defp mount_current_scope(socket, params, session) do
+    IO.inspect(socket, label: "socket 208", infinite: true)
+
     Phoenix.Component.assign_new(socket, :current_scope, fn ->
       user =
         if user_token = session["user_token"] do
           Accounts.get_user_by_session_token(user_token)
         end
 
-      Scope.for_user(user)
+      scope = Scope.for_user(user)
+
+      case params["id"] do
+        nil ->
+          scope
+
+        company_id ->
+          company = Corporate.get_company!(scope, company_id)
+          Scope.put_company(scope, company)
+      end
     end)
   end
 
@@ -246,4 +276,15 @@ defmodule CooptourWeb.UserAuth do
   end
 
   def signed_in_path(_), do: ~p"/"
+
+  def assign_company_to_scope(conn, _opts) do
+    current_scope = conn.assigns.current_scope
+
+    if id = conn.params["id"] do
+      company = Corporate.get_company!(current_scope, id)
+      assign(conn, :current_scope, Scope.put_company(current_scope, company))
+    else
+      conn
+    end
+  end
 end

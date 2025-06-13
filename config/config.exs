@@ -18,6 +18,16 @@ config :cooptour, :scopes,
     schema_table: :users,
     test_data_fixture: Cooptour.AccountsFixtures,
     test_login_helper: :register_and_log_in_user
+  ],
+  company: [
+    module: Cooptour.Accounts.Scope,
+    assign_key: :current_scope,
+    access_path: [:company, :id],
+    schema_key: :company_id,
+    schema_type: :binary_id,
+    schema_table: :companies,
+    test_data_fixture: Cooptour.CorporateFixtures,
+    test_login_helper: :register_and_log_in_user
   ]
 
 config :cooptour,

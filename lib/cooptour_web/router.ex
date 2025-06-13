@@ -11,6 +11,7 @@ defmodule CooptourWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_scope_for_user
+    plug :assign_company_to_scope
   end
 
   pipeline :api do

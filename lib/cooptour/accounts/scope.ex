@@ -17,8 +17,9 @@ defmodule Cooptour.Accounts.Scope do
   """
 
   alias Cooptour.Accounts.User
+  alias Cooptour.Corporate.Company
 
-  defstruct user: nil
+  defstruct user: nil, company: nil
 
   @doc """
   Creates a scope for the given user.
@@ -30,4 +31,8 @@ defmodule Cooptour.Accounts.Scope do
   end
 
   def for_user(nil), do: nil
+
+  def put_company(%__MODULE__{} = scope, %Company{} = company) do
+    %{scope | company: company}
+  end
 end
