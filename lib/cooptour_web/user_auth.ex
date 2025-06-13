@@ -174,7 +174,6 @@ defmodule CooptourWeb.UserAuth do
   end
 
   def on_mount(:assign_company_to_scope, %{id: id}, _session, socket) do
-
     socket =
       case socket.assigns.current_scope do
         %{company: nil} = scope ->
@@ -206,7 +205,6 @@ defmodule CooptourWeb.UserAuth do
   end
 
   defp mount_current_scope(socket, params, session) do
-
     Phoenix.Component.assign_new(socket, :current_scope, fn ->
       user =
         if user_token = session["user_token"] do

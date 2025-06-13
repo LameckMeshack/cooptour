@@ -5,7 +5,6 @@ defmodule CooptourWeb.CompanyLive.Show do
   alias Cooptour.Corporate.Company
   require Logger
 
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -69,6 +68,4 @@ defmodule CooptourWeb.CompanyLive.Show do
       {:noreply, socket}
     end
   end
-
-
 end

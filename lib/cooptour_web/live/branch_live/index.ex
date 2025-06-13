@@ -19,7 +19,11 @@ defmodule CooptourWeb.BranchLive.Index do
       <.table
         id="branches"
         rows={@streams.branches}
-        row_click={fn {_id, branch} -> JS.navigate(~p"/companies/#{@current_scope.company}/branches/#{branch}") end}
+        row_click={
+          fn {_id, branch} ->
+            JS.navigate(~p"/companies/#{@current_scope.company}/branches/#{branch}")
+          end
+        }
       >
         <:col :let={{_id, branch}} label="Name">{branch.name}</:col>
         <:col :let={{_id, branch}} label="Address">
@@ -32,7 +36,9 @@ defmodule CooptourWeb.BranchLive.Index do
           <div class="sr-only">
             <.link navigate={~p"/companies/#{@current_scope.company}/branches/#{branch}"}>Show</.link>
           </div>
-          <.link navigate={~p"/companies/#{@current_scope.company}/branches/#{branch}/edit"}>Edit</.link>
+          <.link navigate={~p"/companies/#{@current_scope.company}/branches/#{branch}/edit"}>
+            Edit
+          </.link>
         </:action>
         <:action :let={{id, branch}}>
           <.link

@@ -14,7 +14,12 @@ defmodule CooptourWeb.BranchLive.Show do
           <.button navigate={~p"/companies/#{@current_scope.company}/branches"}>
             <.icon name="hero-arrow-left" />
           </.button>
-          <.button variant="primary" navigate={~p"/companies/#{@current_scope.company}/branches/#{@branch}/edit?return_to=show"}>
+          <.button
+            variant="primary"
+            navigate={
+              ~p"/companies/#{@current_scope.company}/branches/#{@branch}/edit?return_to=show"
+            }
+          >
             <.icon name="hero-pencil-square" /> Edit branch
           </.button>
         </:actions>

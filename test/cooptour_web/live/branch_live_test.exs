@@ -103,7 +103,10 @@ defmodule CooptourWeb.BranchLiveTest do
                show_live
                |> element("a", "Edit")
                |> render_click()
-               |> follow_redirect(conn, ~p"/companies/#{@company}/branches/#{branch}/edit?return_to=show")
+               |> follow_redirect(
+                 conn,
+                 ~p"/companies/#{@company}/branches/#{branch}/edit?return_to=show"
+               )
 
       assert render(form_live) =~ "Edit Branch"
 
