@@ -8,7 +8,7 @@ defmodule CooptourWeb.CompanyLive.Show do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        Company {@company.id}
+        Company {@company.name}
         <:subtitle>This is a company record from your database.</:subtitle>
         <:actions>
           <.button navigate={~p"/companies"}>
@@ -40,7 +40,6 @@ defmodule CooptourWeb.CompanyLive.Show do
   @impl true
   def mount(%{"id" => id}, _session, socket) do
     Corporate.subscribe_companies(socket.assigns.current_scope)
-    IO.inspect(socket.assigns.current_scope, label: "socket 40", infinite: true)
 
     {:ok,
      socket

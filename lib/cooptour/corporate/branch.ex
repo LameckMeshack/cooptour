@@ -24,5 +24,6 @@ defmodule Cooptour.Corporate.Branch do
     |> validate_required([:name])
     |> cast_embed(:address)
     |> put_change(:user_id, user_scope.user.id)
+    |> put_change(:company_id, user_scope.company.id)
   end
 end

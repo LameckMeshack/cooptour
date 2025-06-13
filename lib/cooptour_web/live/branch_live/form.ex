@@ -99,6 +99,6 @@ defmodule CooptourWeb.BranchLive.Form do
     end
   end
 
-  defp return_path(_scope, "index", _branch), do: ~p"/companies/:id/branches"
-  defp return_path(_scope, "show", branch), do: ~p"/companies/:id/branches/#{branch}"
+  defp return_path(scope, "index", _branch), do: ~p"/companies/#{scope.company}/branches"
+  defp return_path(scope, "show", branch), do: ~p"/companies/#{scope.company}/branches/#{branch}"
 end
