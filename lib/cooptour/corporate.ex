@@ -166,6 +166,12 @@ defmodule Cooptour.Corporate do
     Phoenix.PubSub.subscribe(Cooptour.PubSub, "user:#{key}:branches")
   end
 
+  defp broadcast_branch(%Scope{} = scope, message) do
+    key = scope.user.id
+
+    Phoenix.PubSub.broadcast(Cooptour.PubSub, "user:#{key}:branches", message)
+  end
+
   @doc """
   Returns the list of branches.
 
@@ -214,7 +220,7 @@ defmodule Cooptour.Corporate do
            %Branch{}
            |> Branch.changeset(attrs, scope)
            |> Repo.insert() do
-      broadcast(scope, {:created, branch})
+      broadcast_branch(scope, {:created, branch})
       {:ok, branch}
     end
   end
@@ -238,7 +244,7 @@ defmodule Cooptour.Corporate do
            branch
            |> Branch.changeset(attrs, scope)
            |> Repo.update() do
-      broadcast(scope, {:updated, branch})
+      broadcast_branch(scope, {:updated, branch})
       {:ok, branch}
     end
   end
@@ -260,7 +266,7 @@ defmodule Cooptour.Corporate do
 
     with {:ok, branch = %Branch{}} <-
            Repo.delete(branch) do
-      broadcast(scope, {:deleted, branch})
+      broadcast_branch(scope, {:deleted, branch})
       {:ok, branch}
     end
   end

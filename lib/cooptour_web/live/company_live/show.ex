@@ -50,6 +50,7 @@ defmodule CooptourWeb.CompanyLive.Show do
   end
 
   @impl true
+
   def handle_info({:updated, %Company{id: id} = company}, socket) do
     if socket.assigns[:company].id == id do
       {:noreply, assign(socket, :company, company)}
