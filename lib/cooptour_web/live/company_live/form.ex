@@ -16,7 +16,20 @@ defmodule CooptourWeb.CompanyLive.Form do
 
       <.form for={@form} id="company-form" phx-change="validate" phx-submit="save">
       <div class="layout-content-container flex flex-col w-[512px] max-w-[512px]  max-w-[960px] flex-1">
-        <.input field={@form[:name]} type="text" label="Name" />
+        <.input field={@form[:name]} type="text" label="Company name" placeholder="Enter company name" />
+
+        <!-- Address Fields -->
+        <div class="space-y-4">
+          <.input field={@form[:address_street_address]} type="text" label="Street Address" placeholder="Enter street address" />
+          <.input field={@form[:address_street_address_2]} type="text" label="Street Address 2" placeholder="Enter street address 2 (optional)" />
+          <.input field={@form[:address_city]} type="text" label="City" placeholder="Enter city" />
+          <.input field={@form[:address_state_province]} type="text" label="State/Province" placeholder="Enter state/province" />
+          <.input field={@form[:address_postal_code]} type="text" label="Postal Code" placeholder="Enter postal code" />
+          <.input field={@form[:address_country]} type="text" label="Country" placeholder="Enter country" />
+        </div>
+
+        <.input field={@form[:contact_email]} type="email" label="Contact email" placeholder="Enter contact email" />
+        <.input field={@form[:contact_phone]} type="tel" label="Contact phone" placeholder="Enter contact phone" />
         <.input field={@form[:logo]} type="text" label="Logo" />
         <footer>
           <.button  phx-disable-with="Saving..." variant="primary">Save Company</.button>
@@ -93,7 +106,7 @@ defmodule CooptourWeb.CompanyLive.Form do
   end
 
   defp save_company(socket, :new, company_params) do
-    case Corporate.create_company(socket.assigns.current_scope, company_params) do
+    case Corporate.create_company(socket.assigns.current_scope, company_params) |> IO.inspect() do
       {:ok, company} ->
         {:noreply,
          socket

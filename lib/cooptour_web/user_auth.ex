@@ -271,7 +271,7 @@ defmodule CooptourWeb.UserAuth do
     ~p"/users/settings"
   end
 
-  def signed_in_path(_), do: ~p"/"
+  def signed_in_path(_), do: ~p"/company/new"
 
   def assign_company_to_scope(conn, _opts) do
     current_scope = conn.assigns.current_scope
