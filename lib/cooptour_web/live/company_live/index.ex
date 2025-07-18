@@ -55,7 +55,6 @@ defmodule CooptourWeb.CompanyLive.Index do
             </label>
           </div>
 
-
           <div class="flex px-4 py-3">
             <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#b8cee4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em]">
               <span class="truncate">Create company</span>

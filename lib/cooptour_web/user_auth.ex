@@ -276,7 +276,6 @@ defmodule CooptourWeb.UserAuth do
   def assign_company_to_scope(conn, _opts) do
     current_scope = conn.assigns.current_scope
 
-
     case {conn.params["id"], current_scope} do
       {id, %Scope{} = scope} when is_binary(id) ->
         company = Corporate.get_company!(scope, id)

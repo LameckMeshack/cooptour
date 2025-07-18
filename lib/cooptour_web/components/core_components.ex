@@ -79,48 +79,44 @@ defmodule CooptourWeb.CoreComponents do
     """
   end
 
-@doc """
-Renders a styled button with optional variant and navigation.
+  @doc """
+  Renders a styled button with optional variant and navigation.
 
-## Examples
+  ## Examples
 
-  <.button variant="primary">Save</.button>
-  <.button variant="secondary" navigate={~p"/"}>Cancel</.button>
-"""
-attr :rest, :global, include: ~w(href navigate patch phx-click phx-submit phx-disable-with)
-attr :variant, :string, values: ~w(primary secondary), default: "secondary"
-slot :inner_block, required: true
-
-def button(assigns) do
-  variant_classes = %{
-    "primary" =>
-      "bg-[#b8cee4] text-[#111418] font-bold",
-    "secondary" =>
-      "bg-[#eaedf0] text-[#5e7387] font-medium"
-  }
-
-  assigns =
-    assign(assigns,
-      class:
-        "flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 text-sm leading-normal tracking-[0.015em] #{variant_classes[assigns.variant]}"
-    )
-
-  ~H"""
-  <div class="flex px-4 py-3">
-    <%= if @rest[:href] || @rest[:navigate] || @rest[:patch] do %>
-      <.link class={@class} {@rest}>
-        <span class="truncate"><%= render_slot(@inner_block) %></span>
-      </.link>
-    <% else %>
-      <button class={@class} {@rest}>
-        <span class="truncate"><%= render_slot(@inner_block) %></span>
-      </button>
-    <% end %>
-  </div>
+    <.button variant="primary">Save</.button>
+    <.button variant="secondary" navigate={~p"/"}>Cancel</.button>
   """
-end
+  attr :rest, :global, include: ~w(href navigate patch phx-click phx-submit phx-disable-with)
+  attr :variant, :string, values: ~w(primary secondary), default: "secondary"
+  slot :inner_block, required: true
 
+  def button(assigns) do
+    variant_classes = %{
+      "primary" => "bg-[#b8cee4] text-[#111418] font-bold",
+      "secondary" => "bg-[#eaedf0] text-[#5e7387] font-medium"
+    }
 
+    assigns =
+      assign(assigns,
+        class:
+          "flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 text-sm leading-normal tracking-[0.015em] #{variant_classes[assigns.variant]}"
+      )
+
+    ~H"""
+    <div class="flex px-4 py-3">
+      <%= if @rest[:href] || @rest[:navigate] || @rest[:patch] do %>
+        <.link class={@class} {@rest}>
+          <span class="truncate">{render_slot(@inner_block)}</span>
+        </.link>
+      <% else %>
+        <button class={@class} {@rest}>
+          <span class="truncate">{render_slot(@inner_block)}</span>
+        </button>
+      <% end %>
+    </div>
+    """
+  end
 
   @doc """
   Renders an input with label and error messages.
@@ -208,7 +204,6 @@ end
     """
   end
 
-
   def input(%{type: "select"} = assigns) do
     ~H"""
     <fieldset class="flex max-w-[480px] flex-wrap items-start gap-4 px-4 py-3">
@@ -235,7 +230,6 @@ end
     """
   end
 
-
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <fieldset class="flex max-w-[480px] flex-wrap items-start gap-4 px-4 py-3">
@@ -257,7 +251,6 @@ end
     </fieldset>
     """
   end
-
 
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
@@ -284,7 +277,6 @@ end
     </fieldset>
     """
   end
-
 
   # Helper used by inputs to generate form errors
   defp error(assigns) do

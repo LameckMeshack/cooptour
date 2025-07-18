@@ -10,35 +10,76 @@ defmodule CooptourWeb.CompanyLive.Form do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
         {@page_title}
-        <:subtitle>Register your company to start using Cooptour. The company will ne used as the main and default branch for your company. Welcome to Cooptour!
+        <:subtitle>
+          Register your company to start using Cooptour. The company will ne used as the main and default branch for your company. Welcome to Cooptour!
         </:subtitle>
       </.header>
 
       <.form for={@form} id="company-form" phx-change="validate" phx-submit="save">
-      <div class="layout-content-container flex flex-col w-[512px] max-w-[512px]  max-w-[960px] flex-1">
-        <.input field={@form[:name]} type="text" label="Company name" placeholder="Enter company name" />
+        <div class="layout-content-container flex flex-col w-[512px] max-w-[512px]  max-w-[960px] flex-1">
+          <.input
+            field={@form[:name]}
+            type="text"
+            label="Company name"
+            placeholder="Enter company name"
+          />
+          
+    <!-- Address Fields using inputs_for -->
+          <div class="space-y-4">
+            <h3 class="text-lg font-medium text-[#111418] mb-4">Address Information</h3>
+            <.inputs_for :let={address_form} field={@form[:address]}>
+              <.input
+                field={address_form[:street_address]}
+                type="text"
+                label="Street Address"
+                placeholder="Enter street address"
+              />
+              <.input
+                field={address_form[:street_address_2]}
+                type="text"
+                label="Street Address 2"
+                placeholder="Enter street address 2 (optional)"
+              />
+              <.input field={address_form[:city]} type="text" label="City" placeholder="Enter city" />
+              <.input
+                field={address_form[:state_province]}
+                type="text"
+                label="State/Province"
+                placeholder="Enter state/province"
+              />
+              <.input
+                field={address_form[:postal_code]}
+                type="text"
+                label="Postal Code"
+                placeholder="Enter postal code"
+              />
+              <.input
+                field={address_form[:country]}
+                type="text"
+                label="Country"
+                placeholder="Enter country"
+              />
+            </.inputs_for>
+          </div>
 
-     <!-- Address Fields using inputs_for -->
-      <div class="space-y-4">
-        <h3 class="text-lg font-medium text-[#111418] mb-4">Address Information</h3>
-        <.inputs_for :let={address_form} field={@form[:address]}>
-          <.input field={address_form[:street_address]} type="text" label="Street Address" placeholder="Enter street address" />
-          <.input field={address_form[:street_address_2]} type="text" label="Street Address 2" placeholder="Enter street address 2 (optional)" />
-          <.input field={address_form[:city]} type="text" label="City" placeholder="Enter city" />
-          <.input field={address_form[:state_province]} type="text" label="State/Province" placeholder="Enter state/province" />
-          <.input field={address_form[:postal_code]} type="text" label="Postal Code" placeholder="Enter postal code" />
-          <.input field={address_form[:country]} type="text" label="Country" placeholder="Enter country" />
-        </.inputs_for>
-      </div>
-
-        <.input field={@form[:contact_email]} type="email" label="Contact email" placeholder="Enter contact email" />
-        <.input field={@form[:contact_phone]} type="tel" label="Contact phone" placeholder="Enter contact phone" />
-        <.input field={@form[:logo]} type="text" label="Logo" />
-        <footer>
-          <.button  phx-disable-with="Saving..." variant="primary">Save Company</.button>
-          <.button navigate={return_path(@current_scope, @return_to, @company)}>Cancel</.button>
-        </footer>
-      </div>
+          <.input
+            field={@form[:contact_email]}
+            type="email"
+            label="Contact email"
+            placeholder="Enter contact email"
+          />
+          <.input
+            field={@form[:contact_phone]}
+            type="tel"
+            label="Contact phone"
+            placeholder="Enter contact phone"
+          />
+          <.input field={@form[:logo]} type="text" label="Logo" />
+          <footer>
+            <.button phx-disable-with="Saving..." variant="primary">Save Company</.button>
+            <.button navigate={return_path(@current_scope, @return_to, @company)}>Cancel</.button>
+          </footer>
+        </div>
       </.form>
     </Layouts.app>
     """
@@ -75,7 +116,6 @@ defmodule CooptourWeb.CompanyLive.Form do
     |> assign(:company, company)
     |> assign(:form, to_form(Corporate.change_company(socket.assigns.current_scope, company)))
   end
-
 
   @impl true
   def handle_event("validate", %{"company" => company_params}, socket) do

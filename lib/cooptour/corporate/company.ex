@@ -22,8 +22,6 @@ defmodule Cooptour.Corporate.Company do
 
   @doc false
   def changeset(company, attrs, user_scope) do
-
-
     company
     |> cast(attrs, [:name, :logo, :contact_email, :contact_phone])
     |> validate_required([:name, :logo, :contact_email, :contact_phone])

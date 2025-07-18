@@ -25,7 +25,6 @@ defmodule Cooptour.Corporate.Address do
       :postal_code,
       :country
     ])
-
     |> validate_required([:street_address, :city, :country])
   end
 end
