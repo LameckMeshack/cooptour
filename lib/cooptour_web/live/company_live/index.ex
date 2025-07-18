@@ -7,42 +7,62 @@ defmodule CooptourWeb.CompanyLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <.header>
-        Listing Companies
-        <:actions>
-          <.button variant="primary" navigate={~p"/companies/new"}>
-            <.icon name="hero-plus" /> New Company
-          </.button>
-        </:actions>
-      </.header>
-
-      <.table
-        id="companies"
-        rows={@streams.companies}
-        row_click={fn {_id, company} -> JS.navigate(~p"/companies/#{company}") end}
-      >
-        <:col :let={{_id, company}} label="Name">{company.name}</:col>
-        <:col :let={{_id, company}} label="Logo">{company.logo}</:col>
-        <:col :let={{_id, company}} label="Address">
-          {if company.address != %{} do
-            nil
-          end}
-        </:col>
-        <:action :let={{_id, company}}>
-          <div class="sr-only">
-            <.link navigate={~p"/companies/#{company}"}>Show</.link>
+      <div class="px-40 flex flex-1 justify-center ">
+        <div class="layout-content-container flex flex-col w-[512px] max-w-[512px]  max-w-[960px] flex-1">
+          <div class="flex flex-wrap justify-between gap-3 p-4">
+            <p class="text-[#111418] tracking-light text-[32px] font-bold leading-tight min-w-72">
+              Create your company
+            </p>
           </div>
-          <.link navigate={~p"/companies/#{company}/edit"}>Edit</.link>
-        </:action>
-        <:action :let={{id, company}}>
-          <.link
-            phx-click={JS.push("delete", value: %{id: company.id}) |> hide("##{id}")}
-            data-confirm="Are you sure?"
-          >
-            Delete
-          </.link>
-        </:action>
-      </.table>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <p class="text-[#111418] text-base font-medium leading-normal pb-2">Company name</p>
+              <input
+                placeholder="Enter company name"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#eaedf0] focus:border-none h-14 placeholder:text-[#5e7387] p-4 text-base font-normal leading-normal"
+                value=""
+              />
+            </label>
+          </div>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <p class="text-[#111418] text-base font-medium leading-normal pb-2">Main location</p>
+              <input
+                placeholder="Enter main location"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#eaedf0] focus:border-none h-14 placeholder:text-[#5e7387] p-4 text-base font-normal leading-normal"
+                value=""
+              />
+            </label>
+          </div>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <p class="text-[#111418] text-base font-medium leading-normal pb-2">Contact email</p>
+              <input
+                placeholder="Enter contact email"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#eaedf0] focus:border-none h-14 placeholder:text-[#5e7387] p-4 text-base font-normal leading-normal"
+                value=""
+              />
+            </label>
+          </div>
+          <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label class="flex flex-col min-w-40 flex-1">
+              <p class="text-[#111418] text-base font-medium leading-normal pb-2">Contact phone</p>
+              <input
+                placeholder="Enter contact phone"
+                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#eaedf0] focus:border-none h-14 placeholder:text-[#5e7387] p-4 text-base font-normal leading-normal"
+                value=""
+              />
+            </label>
+          </div>
+
+
+          <div class="flex px-4 py-3">
+            <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#b8cee4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em]">
+              <span class="truncate">Create company</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </Layouts.app>
     """
   end

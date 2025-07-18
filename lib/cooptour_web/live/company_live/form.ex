@@ -10,16 +10,19 @@ defmodule CooptourWeb.CompanyLive.Form do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
         {@page_title}
-        <:subtitle>Use this form to manage company records in your database.</:subtitle>
+        <:subtitle>Register your company to start using Cooptour. The company will ne used as the main and default branch for your company. Welcome to Cooptour!
+        </:subtitle>
       </.header>
 
       <.form for={@form} id="company-form" phx-change="validate" phx-submit="save">
+      <div class="layout-content-container flex flex-col w-[512px] max-w-[512px]  max-w-[960px] flex-1">
         <.input field={@form[:name]} type="text" label="Name" />
         <.input field={@form[:logo]} type="text" label="Logo" />
         <footer>
-          <.button phx-disable-with="Saving..." variant="primary">Save Company</.button>
+          <.button  phx-disable-with="Saving..." variant="primary">Save Company</.button>
           <.button navigate={return_path(@current_scope, @return_to, @company)}>Cancel</.button>
         </footer>
+      </div>
       </.form>
     </Layouts.app>
     """
@@ -49,7 +52,7 @@ defmodule CooptourWeb.CompanyLive.Form do
     company = %Company{user_id: socket.assigns.current_scope.user.id}
 
     socket
-    |> assign(:page_title, "New Company")
+    |> assign(:page_title, "Create your company")
     |> assign(:company, company)
     |> assign(:form, to_form(Corporate.change_company(socket.assigns.current_scope, company)))
   end
