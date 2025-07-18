@@ -79,37 +79,48 @@ defmodule CooptourWeb.CoreComponents do
     """
   end
 
-  @doc """
-  Renders a button with navigation support.
+@doc """
+Renders a styled button with optional variant and navigation.
 
-  ## Examples
+## Examples
 
-      <.button>Send!</.button>
-      <.button phx-click="go" variant="primary">Send!</.button>
-      <.button navigate={~p"/"}>Home</.button>
-  """
-  attr :rest, :global, include: ~w(href navigate patch)
-  attr :variant, :string, values: ~w(primary)
-  slot :inner_block, required: true
+  <.button variant="primary">Save</.button>
+  <.button variant="secondary" navigate={~p"/"}>Cancel</.button>
+"""
+attr :rest, :global, include: ~w(href navigate patch phx-click phx-submit phx-disable-with)
+attr :variant, :string, values: ~w(primary secondary), default: "secondary"
+slot :inner_block, required: true
 
-  def button(%{rest: rest} = assigns) do
-    variants = %{"primary" => "btn-primary", nil => "btn-primary btn-soft"}
-    assigns = assign(assigns, :class, Map.fetch!(variants, assigns[:variant]))
+def button(assigns) do
+  variant_classes = %{
+    "primary" =>
+      "bg-[#b8cee4] text-[#111418] font-bold",
+    "secondary" =>
+      "bg-[#eaedf0] text-[#5e7387] font-medium"
+  }
 
-    if rest[:href] || rest[:navigate] || rest[:patch] do
-      ~H"""
-      <.link class={["btn", @class]} {@rest}>
-        {render_slot(@inner_block)}
+  assigns =
+    assign(assigns,
+      class:
+        "flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 text-sm leading-normal tracking-[0.015em] #{variant_classes[assigns.variant]}"
+    )
+
+  ~H"""
+  <div class="flex px-4 py-3">
+    <%= if @rest[:href] || @rest[:navigate] || @rest[:patch] do %>
+      <.link class={@class} {@rest}>
+        <span class="truncate"><%= render_slot(@inner_block) %></span>
       </.link>
-      """
-    else
-      ~H"""
-      <button class={["btn", @class]} {@rest}>
-        {render_slot(@inner_block)}
+    <% else %>
+      <button class={@class} {@rest}>
+        <span class="truncate"><%= render_slot(@inner_block) %></span>
       </button>
-      """
-    end
-  end
+    <% end %>
+  </div>
+  """
+end
+
+
 
   @doc """
   Renders an input with label and error messages.
@@ -178,83 +189,102 @@ defmodule CooptourWeb.CoreComponents do
       end)
 
     ~H"""
-    <fieldset class="fieldset mb-2">
-      <label>
+    <fieldset class="flex max-w-[480px] flex-wrap items-start gap-4 px-4 py-3">
+      <label class="flex items-center gap-3 text-[#111418] text-base font-medium leading-normal">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
-        <span class="fieldset-label">
-          <input
-            type="checkbox"
-            id={@id}
-            name={@name}
-            value="true"
-            checked={@checked}
-            class="checkbox checkbox-sm"
-            {@rest}
-          />{@label}
-        </span>
+        <input
+          type="checkbox"
+          id={@id}
+          name={@name}
+          value="true"
+          checked={@checked}
+          class="h-5 w-5 rounded border-none bg-[#eaedf0] text-[#111418] focus:outline-none focus:ring-0"
+          {@rest}
+        />
+        <p>{@label}</p>
+        <.error :for={msg <- @errors}>{msg}</.error>
       </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
     </fieldset>
     """
   end
 
+
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <fieldset class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="fieldset-label mb-1">{@label}</span>
+    <fieldset class="flex max-w-[480px] flex-wrap items-start gap-4 px-4 py-3">
+      <label class="flex flex-col min-w-40 flex-1">
+        <p :if={@label} class="text-[#111418] text-base font-medium leading-normal pb-2">
+          {@label}
+        </p>
         <select
           id={@id}
           name={@name}
-          class={["w-full select", @errors != [] && "select-error"]}
+          class={[
+            "form-select w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#eaedf0] focus:border-none h-14 p-4 text-base font-normal leading-normal",
+            @errors != [] && "select-error"
+          ]}
           multiple={@multiple}
           {@rest}
         >
           <option :if={@prompt} value="">{@prompt}</option>
           {Phoenix.HTML.Form.options_for_select(@options, @value)}
         </select>
+        <.error :for={msg <- @errors}>{msg}</.error>
       </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
     </fieldset>
     """
   end
 
+
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <fieldset class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="fieldset-label mb-1">{@label}</span>
+    <fieldset class="flex max-w-[480px] flex-wrap items-start gap-4 px-4 py-3">
+      <label class="flex flex-col min-w-40 flex-1">
+        <p :if={@label} class="text-[#111418] text-base font-medium leading-normal pb-2">
+          {@label}
+        </p>
         <textarea
           id={@id}
           name={@name}
-          class={["w-full textarea", @errors != [] && "textarea-error"]}
+          class={[
+            "form-textarea w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#eaedf0] focus:border-none min-h-[112px] p-4 text-base font-normal leading-normal",
+            @errors != [] && "textarea-error"
+          ]}
           {@rest}
         >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+        <.error :for={msg <- @errors}>{msg}</.error>
       </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
     </fieldset>
     """
   end
+
 
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <fieldset class="fieldset mb-2">
-      <label>
-        <span :if={@label} class="fieldset-label mb-1">{@label}</span>
+    <fieldset class="flex max-w-[480px] flex-wrap items-start gap-4 px-4 py-3">
+      <label class="flex flex-col min-w-40 flex-1">
+        <p :if={@label} class="text-[#111418] text-base font-medium leading-normal pb-2">
+          {@label}
+        </p>
         <input
           type={@type}
           name={@name}
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-          class={["w-full input", @errors != [] && "input-error"]}
+          placeholder={@rest[:placeholder]}
+          class={[
+            "form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#eaedf0] focus:border-none h-14 placeholder:text-[#5e7387] p-4 text-base font-normal leading-normal",
+            @errors != [] && "input-error"
+          ]}
           {@rest}
         />
+        <.error :for={msg <- @errors}>{msg}</.error>
       </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
     </fieldset>
     """
   end
+
 
   # Helper used by inputs to generate form errors
   defp error(assigns) do
