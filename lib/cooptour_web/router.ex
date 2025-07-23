@@ -57,6 +57,7 @@ defmodule CooptourWeb.Router do
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
 
       live "/companies", CompanyLive.Index, :index
+      live "/company/dashboard", CompanyLive.Show, :show
       live "/company/new", CompanyLive.Form, :new
       live "/companies/:id", CompanyLive.Show, :show
       live "/companies/:id/edit", CompanyLive.Form, :edit

@@ -64,6 +64,10 @@ defmodule Cooptour.Corporate do
     Repo.get_by!(Company, id: id, user_id: scope.user.id)
   end
 
+  def get_company!(%Scope{user: %{id: user_id}} = _scope) do
+    Repo.get_by!(Company, user_id: user_id)
+  end
+
   @doc """
   Creates a company.
 

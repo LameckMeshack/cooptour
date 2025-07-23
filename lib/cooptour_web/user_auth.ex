@@ -35,11 +35,25 @@ defmodule CooptourWeb.UserAuth do
     user_return_to = get_session(conn, :user_return_to)
     remember_me = get_session(conn, :user_remember_me)
 
-    conn
-    |> renew_session()
-    |> put_token_in_session(token)
+    # Fetch the user's company and assign it to the current_scope
+    scope = Scope.for_user(user)
+
+    scope_with_company =
+      case Corporate.get_company!(scope) do
+        nil -> scope
+        company -> Scope.put_company(scope, company)
+      end
+
+    updated_conn =
+      conn
+      |> renew_session()
+      |> put_token_in_session(token)
+      |> assign(:current_scope, scope_with_company)
+
+    updated_conn
     |> maybe_write_remember_me_cookie(token, params, remember_me)
-    |> redirect(to: user_return_to || signed_in_path(conn))
+    # Pass updated_conn here
+    |> redirect(to: user_return_to || signed_in_path(updated_conn))
   end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}, _),
@@ -267,11 +281,21 @@ defmodule CooptourWeb.UserAuth do
 
   @doc "Returns the path to redirect to after log in."
   # the user was already logged in, redirect to settings
-  def signed_in_path(%Plug.Conn{assigns: %{current_scope: %Scope{user: %Accounts.User{}}}}) do
-    ~p"/users/settings"
+  def signed_in_path(%Plug.Conn{
+        assigns: %{current_scope: %Scope{user: %Accounts.User{}, company: nil}} = _assigns
+      }) do
+    ~p"/company/new"
   end
 
-  def signed_in_path(_), do: ~p"/company/new"
+  def signed_in_path(%Plug.Conn{
+        assigns: %{current_scope: %Scope{user: %Accounts.User{}, company: _company}} = _assigns
+      }) do
+    ~p"/company/dashboard"
+  end
+
+  def signed_in_path(_) do
+    ~p"/company/new"
+  end
 
   def assign_company_to_scope(conn, _opts) do
     current_scope = conn.assigns.current_scope
